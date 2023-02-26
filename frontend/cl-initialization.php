@@ -53,7 +53,7 @@ function complete_login_init(){
                             });
                         } else if (response.status === 'unknown') {  // Not logged into your webpage or we are unable to tell.
                             // alert('No user currently logged in');
-                            console.log('No no user currently logged in using facebook');
+                            console.log('No user currently logged in using facebook');
                         }else{
                             console.log('Definetly no user currently logged in using facebook');
                         }
@@ -103,6 +103,37 @@ function complete_login_init(){
                             console.log('User logged out from facebook !!!');
                         });
                     }
+
+
+                    //========================================
+                    //========================================
+                    //========================================
+
+                    var getCookies = function(){
+                        var pairs = document.cookie.split(';');
+                        var cookies = {};
+                        for (var i=0; i<pairs.length; i++){
+                            var pair = pairs[i].split('=');
+                            cookies[(pair[0]+'').trim()] = unescape(pair.slice(1).join('='));
+                        }
+                        return cookies;
+                    }
+
+                    
+
+                    // function show_login_status(){
+                    //     var myCookies = getCookies();
+
+                    //     console.log(myCookies.g_cookie);
+
+                    //     if(myCookies.g_cookie === 'signedin'){ // if user signed in
+                    //         //hide the signin button
+                    //         document.getElementById('google_login').classList.add('hide');
+
+                    //         //show signout button
+                    //         document.getElementById('google-logout').classList.remove('hide');
+                    //     }
+                    // }
 
                 </script>";        
         }
@@ -156,7 +187,8 @@ function complete_login_init(){
             <div class="user-login">
 
                 <!-- Google signin button -->
-                <div id="g_id_onload"
+                <div 
+                    id="g_id_onload"
                     data-client_id="975954367849-kpnpua9cia8pk9n882o9jgnm8cctpehd.apps.googleusercontent.com"
                     data-context="signin"
                     data-ux_mode="popup"
@@ -164,19 +196,21 @@ function complete_login_init(){
                     data-auto_prompt="false">
                 </div>
 
-                <div class="g_id_signin"
+                <div 
+                    id="google_login"
+                    class="g_id_signin"
                     data-type="standard"
                     data-shape="rectangular"
                     data-theme="filled_blue"
-                    data-text="login_with"
+                    data-text="signin_with"
                     data-size="large"
                     data-locale="en-US"
                     data-logo_alignment="left">
                 </div>
 
                 <!-- Google logout button -->
-                <div id="google-logout" class="">
-                    <a href="" onclick="googleSignOut();">Logout from Google?</a>
+                <div id="google-logout" class="hide">
+                    <a href="">Logout from Google?</a> 
                 </div>
             </div>
 
@@ -184,24 +218,9 @@ function complete_login_init(){
 
                 <!-- Facebook signin button -->
                 <div id="fb-root"></div>
-
-                <script 
-                    async 
-                    defer 
-                    crossorigin="anonymous" 
-                    src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v16.0&appId=1336979370426534&autoLogAppEvents=1" nonce="OJDXbaIR">  
-                </script>
+                <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v16.0&appId=1336979370426534&autoLogAppEvents=1" nonce="OJDXbaIR"> </script>
                 
-                <div 
-                    id="fb-login"
-                    class="fb-login-button" 
-                    onlogin="checkLoginState();"
-                    data-size="medium" 
-                    data-button-type="" 
-                    data-layout=""
-                    data-auto-logout-link="false" 
-                    data-use-continue-as="false">
-                </div>
+                <div id="fb-login"class="fb-login-button" onlogin="checkLoginState();"data-size="medium" data-button-type="" data-layout=""data-auto-logout-link="false" data-use-continue-as="false"></div>
 
                 <!-- Facebook logout button -->
                 <div id="fb-logout" class="hide">
@@ -210,20 +229,48 @@ function complete_login_init(){
             </div>
         </div>
     </div>
+    <!-- helps in checking if user already logged in using google -->
+    <div style="display:none;" onload="show_login_status();"></div>
 
 
     <script>
+
+        /** 
+         * Checking if the user is signed in to google. If the user is signed in, it hides the sign in button and
+         * shows the sign out button. 
+        */
+        var myCookies = getCookies();
+        console.log(myCookies.g_cookie);
+
+        if(myCookies.g_cookie === 'signedin'){ // if user signed in
+            //hide the signin button
+            document.getElementById('google_login').classList.add('hide');
+
+            //show signout button
+            document.getElementById('google-logout').classList.remove('hide');
+        }
 
         /**
          * The function takes the response from the Google Sign-In API and decodes the JWT response to
          * get the user's ID, name, image URL, and email address.
          */
         function handleCredentialResponse(response) {
+            
+            //display user info
             const responsePayload = decodeJwtResponse(response.credential);
             console.log('Google ID: ' + responsePayload.sub); // Do not send to your backend! Use an ID token instead.
             console.log('Google Name: ' + responsePayload.name);
             console.log('Google Image URL: ' + responsePayload.picture);
             console.log('Google Email: ' + responsePayload.email); // This is null if the 'email' scope is not present.
+
+            //hide the signin button
+            document.getElementById('google_login').classList.add('hide');
+
+            //show signout button
+            document.getElementById('google-logout').classList.remove('hide');
+
+            //set cookie after signin
+            document.cookie = 'g_cookie=signedin';
         }
 
         /**
@@ -240,13 +287,16 @@ function complete_login_init(){
 
 
         /**
-         * The signOut() method of the GoogleAuth object signs the user out of the application and
-         * revokes all of the scopes that the user granted.
+         * Revoking the consent of the user. 
          */
-        function googleSignOut() {
-            var auth2 = gapi.auth2.getAuthInstance();
-            auth2.signOut().then(function () {
-            console.log('User signed out from google.');
+
+        const googleSignoutBtn = document.getElementById('google-logout');
+        
+        googleSignoutBtn.onclick = () => {
+            //set cookie to empty after signout
+            document.cookie = 'g_cookie=';
+            google.accounts.id.revoke('neplese931@gmail.com', done => {
+                console.log('consent revoked');
             });
         }
 

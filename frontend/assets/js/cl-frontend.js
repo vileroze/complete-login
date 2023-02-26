@@ -24,4 +24,10 @@ window.onload = function(){
       modal.style.display = "none";
     }
   }
+
+  // var myCookies = getCookies();
+  // console.log(myCookies.g_cookie);
+
+  // if(myCookies.g_cookie !== ''){console.log('koi cha');}
 };
+
