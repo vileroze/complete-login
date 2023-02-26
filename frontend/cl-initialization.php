@@ -103,38 +103,6 @@ function complete_login_init(){
                             console.log('User logged out from facebook !!!');
                         });
                     }
-
-
-                    //========================================
-                    //========================================
-                    //========================================
-
-                    var getCookies = function(){
-                        var pairs = document.cookie.split(';');
-                        var cookies = {};
-                        for (var i=0; i<pairs.length; i++){
-                            var pair = pairs[i].split('=');
-                            cookies[(pair[0]+'').trim()] = unescape(pair.slice(1).join('='));
-                        }
-                        return cookies;
-                    }
-
-                    
-
-                    // function show_login_status(){
-                    //     var myCookies = getCookies();
-
-                    //     console.log(myCookies.g_cookie);
-
-                    //     if(myCookies.g_cookie === 'signedin'){ // if user signed in
-                    //         //hide the signin button
-                    //         document.getElementById('google_login').classList.add('hide');
-
-                    //         //show signout button
-                    //         document.getElementById('google-logout').classList.remove('hide');
-                    //     }
-                    // }
-
                 </script>";        
         }
         add_action( 'wp_head', 'complete_login_third_party_login' );
@@ -187,31 +155,14 @@ function complete_login_init(){
             <div class="user-login">
 
                 <!-- Google signin button -->
-                <div 
-                    id="g_id_onload"
-                    data-client_id="975954367849-kpnpua9cia8pk9n882o9jgnm8cctpehd.apps.googleusercontent.com"
-                    data-context="signin"
-                    data-ux_mode="popup"
-                    data-callback="handleCredentialResponse"
-                    data-auto_prompt="false">
-                </div>
-
-                <div 
-                    id="google_login"
-                    class="g_id_signin"
-                    data-type="standard"
-                    data-shape="rectangular"
-                    data-theme="filled_blue"
-                    data-text="signin_with"
-                    data-size="large"
-                    data-locale="en-US"
-                    data-logo_alignment="left">
-                </div>
+                <div id="g_id_onload" data-client_id="975954367849-kpnpua9cia8pk9n882o9jgnm8cctpehd.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
+                <div  id="google_login" class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue" data-text="signin_with" data-size="large" data-locale="en-US" data-logo_alignment="left"></div>
 
                 <!-- Google logout button -->
                 <div id="google-logout" class="hide">
                     <a href="">Logout from Google?</a> 
                 </div>
+
             </div>
 
             <div class="user-login">
@@ -219,18 +170,16 @@ function complete_login_init(){
                 <!-- Facebook signin button -->
                 <div id="fb-root"></div>
                 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v16.0&appId=1336979370426534&autoLogAppEvents=1" nonce="OJDXbaIR"> </script>
-                
-                <div id="fb-login"class="fb-login-button" onlogin="checkLoginState();"data-size="medium" data-button-type="" data-layout=""data-auto-logout-link="false" data-use-continue-as="false"></div>
+                <div id="fb-login"class="fb-login-button" onlogin="checkLoginState();" data-size="medium" data-button-type="" data-layout="" data-auto-logout-link="false" data-use-continue-as="false"></div>
 
                 <!-- Facebook logout button -->
                 <div id="fb-logout" class="hide">
                     <a href="" onclick="fbSignOut();">Logout from Facebook?</a>
                 </div>
+
             </div>
         </div>
     </div>
-    <!-- helps in checking if user already logged in using google -->
-    <div style="display:none;" onload="show_login_status();"></div>
 
 
     <script>
@@ -239,6 +188,16 @@ function complete_login_init(){
          * Checking if the user is signed in to google. If the user is signed in, it hides the sign in button and
          * shows the sign out button. 
         */
+        var getCookies = function(){
+            var pairs = document.cookie.split(';');
+            var cookies = {};
+            for (var i=0; i<pairs.length; i++){
+                var pair = pairs[i].split('=');
+                cookies[(pair[0]+'').trim()] = unescape(pair.slice(1).join('='));
+            }
+            return cookies;
+        }
+
         var myCookies = getCookies();
         console.log(myCookies.g_cookie);
 
