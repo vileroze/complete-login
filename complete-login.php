@@ -31,3 +31,4 @@ register_deactivation_hook( __FILE__, 'complete_login_deactivate' );
 
 require_once __DIR__ . '/frontend/cl-initialization.php';
 
+require_once __DIR__ . '/admin/cl-settings-page.php';
