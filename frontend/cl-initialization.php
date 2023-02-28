@@ -34,7 +34,7 @@ function complete_login_init(){
 
             //intializing facebook js sdk
             echo "<script>
-                    //check for change in login status
+                    //check for change in userlogin status
                     function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
                         if (response.status === 'connected') {   // Logged into your webpage and Facebook.
                             FB.api('/me?fields=name,email', function(response) {
@@ -107,12 +107,6 @@ function complete_login_init(){
         }
         add_action( 'wp_head', 'complete_login_third_party_login' );
 
-        function complete_login_fb(){
-            echo '<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>';
-        }
-        add_action( 'wp_footer', 'complete_login_fb' );
-
-
         //adding nav item to display login options
         add_filter('wp_nav_menu_items','complete_login_custom_menu_items', 10, 2);
         function complete_login_custom_menu_items( $items, $args ) 
@@ -141,9 +135,7 @@ function complete_login_init(){
  * Shows modal with different login options
  */
 
- function complete_login_third_party_login_providers(){
-
-    ?>
+ function complete_login_third_party_login_providers(){ ?>
 
     <!-- The Modal -->
     <div id="myModal" class="modal">
@@ -153,7 +145,6 @@ function complete_login_init(){
             <h5>LOGIN</h5>
 
             <div class="user-login">
-
                 <!-- Google signin button -->
                 <div id="g_id_onload" data-client_id="975954367849-kpnpua9cia8pk9n882o9jgnm8cctpehd.apps.googleusercontent.com" data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false"></div>
                 <div  id="google_login" class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_blue" data-text="signin_with" data-size="large" data-locale="en-US" data-logo_alignment="left"></div>
@@ -162,11 +153,9 @@ function complete_login_init(){
                 <div id="google-logout" class="hide">
                     <a href="">Logout from Google?</a> 
                 </div>
-
             </div>
 
             <div class="user-login">
-
                 <!-- Facebook signin button -->
                 <div id="fb-root"></div>
                 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v16.0&appId=1336979370426534&autoLogAppEvents=1" nonce="OJDXbaIR"> </script>
@@ -176,7 +165,18 @@ function complete_login_init(){
                 <div id="fb-logout" class="hide">
                     <a href="" onclick="fbSignOut();">Logout from Facebook?</a>
                 </div>
+            </div>
 
+            <div class="user-login">
+                <!-- Linkedin signin button -->
+                <a href="" class="linkedin-signin">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-supported-dps="24x24" fill="currentColor" class="mercado-match" width="30" height="30" focusable="false">
+                            <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+                        </svg>
+                        <p>Log in With Linkedin</p>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
