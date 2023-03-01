@@ -51,6 +51,7 @@ if ( $first_code != '' ) {//&& !empty($li_client_id) && $li_client_id != "" && $
     $basic_response = curl_exec($ch_user_info);
     $basic_headerSize = curl_getinfo($ch_user_info, CURLINFO_HEADER_SIZE);
     $basic_body = substr($basic_response, $basic_headerSize);
+    $basic_response_body = json_decode($basic_body,true);
  
 
     //get email address of user
