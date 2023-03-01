@@ -145,12 +145,16 @@ function complete_login_init(){
 
  function complete_login_third_party_login_providers(){ 
 
-    //check if auth id / client id provided
+    //check if auth id / client id / client secret provided
     $google_auth_id = get_option( 'cl_google_client_id' );
-    $google_auth_configured = !empty($google_auth_id) && $google_auth_id != "" && $google_auth_id != "---";
+    $google_btn_configured = !empty($google_auth_id) && $google_auth_id != "" && $google_auth_id != "---";
 
     $fbook_app_id = get_option( 'cl_facebook_app_id' );
-    $fbook_app_configured = !empty($fbook_app_id) && $fbook_app_id != "" && $fbook_app_id != "---";
+    $fbook_btn_configured = !empty($fbook_app_id) && $fbook_app_id != "" && $fbook_app_id != "---";
+
+    $linkedin_client_id = get_option( 'cl_linkedin_client_id' );
+    $linkedin_client_secret = get_option( 'cl_linkedin_client_secret' );
+    $linkedin_btn_configured = !empty($linkedin_client_id) && $linkedin_client_id != "" && $linkedin_client_id != "---" && !empty($linkedin_client_secret) && $linkedin_client_secret != "" && $linkedin_client_secret != "---" ;
     ?>
 
     <!-- The Modal -->
@@ -160,7 +164,7 @@ function complete_login_init(){
             <span class="close">&times;</span>
             <h5>LOGIN</h5>
 
-            <?php if ( $google_auth_configured ){ ?>
+            <?php if ( $google_btn_configured ){ ?>
 
                 <div class="user-login">
                     <!-- Google signin button -->
@@ -179,7 +183,8 @@ function complete_login_init(){
                 </div>
             <?php } ?>
 
-            <?php if ( $fbook_app_configured ){ ?>
+
+            <?php if ( $fbook_btn_configured ){ ?>
 
                 <div class="user-login">
                     <!-- Facebook signin button -->
@@ -199,17 +204,26 @@ function complete_login_init(){
                 </div>
             <?php } ?>
 
-            <div class="user-login">
-                <!-- Linkedin signin button -->
-                <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86q3eul364itg6&redirect_uri=https://scary-novel.localsite.io/&scope=r_liteprofile%20r_emailaddress" class="linkedin-signin">
-                    <div>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-supported-dps="24x24" fill="currentColor" class="mercado-match" width="30" height="30" focusable="false">
-                            <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
-                        </svg>
-                        <p>Log in With Linkedin</p>
-                    </div>
-                </a>
-            </div>
+
+            <?php if ( $linkedin_btn_configured ){ ?>
+
+                <div class="user-login">
+                    <!-- Linkedin signin button -->
+                    <a href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=86q3eul364itg6&redirect_uri=https://scary-novel.localsite.io/&scope=r_liteprofile%20r_emailaddress" class="linkedin-signin">
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" data-supported-dps="24x24" fill="currentColor" class="mercado-match" width="30" height="30" focusable="false">
+                                <path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19a.66.66 0 000 .14V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"></path>
+                            </svg>
+                            <p>Log in With Linkedin</p>
+                        </div>
+                    </a>
+                </div>
+
+            <?php }else{ //the error message if not app id found ?>
+                <div class="user-login">
+                    <p class="err">⚠️ Linkedin button didn't load properly, make sure that you add your client ID and client secret from the admin settings !!!</p>
+                </div>
+            <?php } ?>
         </div>
     </div>
 

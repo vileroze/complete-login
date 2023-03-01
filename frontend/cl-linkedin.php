@@ -6,7 +6,10 @@
  */
 
 $first_code = empty($_GET['code']) ? '' : $_GET['code'];
-if ($first_code != '') {
+$li_client_id = get_option( 'cl_linkedin_client_id' );
+$li_client_secret = get_option( 'cl_linkedin_client_secret' );
+
+if ( $first_code != '' ) {//&& !empty($li_client_id) && $li_client_id != "" && $li_client_id != "---" && !empty($li_client_secret) && $li_client_secret != "" && $li_client_secret != "---"
 
     $first_code = trim($first_code," ");
     $user_name = '';
@@ -18,7 +21,7 @@ if ($first_code != '') {
      * pass it into the below url to get access token
      */
 
-    $url = "https://www.linkedin.com/oauth/v2/accessToken?code=".$first_code."&grant_type=authorization_code&client_id=86q3eul364itg6&client_secret=Tev6wxO3NnTVnLAH&redirect_uri=https://scary-novel.localsite.io/";
+    $url = "https://www.linkedin.com/oauth/v2/accessToken?code=".$first_code."&grant_type=authorization_code&client_id=".$li_client_id."&client_secret=".$li_client_secret."&redirect_uri=https://scary-novel.localsite.io/";
     $json = file_get_contents($url);
     $json_data = json_decode($json, true);
     $linkedin_access_token = $json_data["access_token"];
@@ -34,8 +37,7 @@ if ($first_code != '') {
     $url_basic = 'https://api.linkedin.com/v2/me';
 
     $ch_user_info = curl_init($url_basic);                                                                      
-    curl_setopt($ch_user_info, CURLOPT_CUSTOMREQUEST, "GET");                                                                     
-    // curl_setopt($ch_user_info, CURLOPT_HTTPHEADER, $additional_headers); 
+    curl_setopt($ch_user_info, CURLOPT_CUSTOMREQUEST, "GET");
     curl_setopt($ch_user_info, CURLOPT_HTTPHEADER, [
         'Authorization: Bearer '. $linkedin_access_token,
         'X-Restli-Protocol-Version: 2.0.0',
@@ -78,15 +80,13 @@ if ($first_code != '') {
     ?>
         <script>
             console.log("=========== Linkedin User Info ===========");
-            console.log("Linkedin name =  <?php echo $user_name;  ?>");
-            console.log("Linkedin email =  <?php echo $user_email;  ?>");
+            console.log("Linkedin name =  <?php echo $user_name; ?>");
+            console.log("Linkedin email =  <?php echo $user_email; ?>");
         </script>
     <?php
 
     
 }else{
-
-    echo '<script>console.log("=======code aako chaina"); </script>';
-
+    echo '<script>console.log("Linkedin button not pressed"); </script>';
 }
 
