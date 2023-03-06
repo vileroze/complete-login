@@ -30,23 +30,13 @@ function checkLoginState() { // Called when a person clicks the Login Button.
 }
 
 window.fbAsyncInit = function() {
-    FB.init({
-        appId      : '".$fb_app_id."',
-        cookie     : true, // Enable cookies to allow the server to access the session.
-        xfbml      : true, // Parse social plugins on this webpage.
-        version    : 'v16.0' // Use this Graph API version for this call.
-    });
 
     FB.getLoginStatus(function(response) { // Called after the JS SDK has been initialized.
         statusChangeCallback(response); // Returns the login status.
     });
 
-    // FB.login(function(response) {
-    //     // handle the response
-    //     console.log('User logged in to facebook !!!')
-    //     console.log(response);
-
-    // }, {scope: 'name,email', return_scopes: true});
+    // FB.Canvas.setAutoGrow();
+    FB.Canvas.setSize({width:810, height:775});
 };
 
 (function(d, s, id){

@@ -12,22 +12,22 @@ button{
     top: 0;
     width: 100%; /* Full width */
     height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
+    overflow: auto;
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
 /* Modal Content */
 .modal-content {
-    justify-content: center;
-    align-items: center;
     background-color: rgba(255,255,255,0.9);
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 40%;
+    width: fit-content;
+    height: auto;
+    overflow-y: scroll;
+    max-width: 80%;
 }
-
 
 .modal-content h5{
     color: #E74C3C;
@@ -36,7 +36,7 @@ button{
 }
 
 /* Modals Close Button */
-.close {
+.close, .close1 {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
@@ -50,14 +50,30 @@ button{
     cursor: pointer;
 }
 
+.close1:hover,
+.close1:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 
 /* user login options */
+
+.third-party-login{
+    /* justify-content: center;
+    display: flex;
+    gap: 1rem; */
+    padding-left: 6rem;
+}
+
 
 .user-login{
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: auto;
     padding-bottom: 1rem;
+    /* min-width: 40px !important; */
 }
 
 .user-login button{
@@ -81,26 +97,37 @@ button{
     text-decoration: underline !important;
 }
 
+.reset-pass, .reset-pass:hover{
+    color: blue !important;
+    text-decoration: underline !important;
+    background-color: transparent !important;
+    width: fit-content;
+    margin: auto;
+}
+
 /* linkedin sign-in button */
 
 .user-login .linkedin-signin{
     background-color: #1877f2;
     color: white;
-    border-radius: 5px;
+    border-radius: 3px;
     font-size: 14px;
     width: fit-content;
+    min-width: 230px;
     padding: 5px 5px;
 }
 
 .user-login .linkedin-signin div{
     display: flex;
+    padding-left: 5px;
 }
 
 .user-login .linkedin-signin div p{
     text-align: center;
     margin: 0;
+    font-size: 18px;
     padding-top: 5px;
-    padding-left: 5px;
+    padding-left: 10px;
     padding-right: 5px;
 }
 
@@ -109,8 +136,63 @@ button{
 }
 
 .err{
+    width: fit-content;
     color: red;
     border: 3px solid red;
     border-radius: 5px;
     padding: 5px;
+    margin: auto;
+    text-align: center;
+}
+
+.err a{
+    margin: 0;
+    padding: 0;
+    color: #E74C3C;
+    text-decoration: underline;
+}
+
+.err a:hover{
+    margin: 0;
+    padding: 0;
+    color: #E74C3C;
+    text-decoration: underline;
+    background-color: transparent !important;
+}
+
+a.logout-btn{
+    max-width: 5.7rem;
+    border: none;
+    border-radius: 3px;
+    font-weight: bold;
+    color: #ffffff!important;
+    background: #e74c3c;
+    font-size: 0.875rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* user registration form */
+
+button#myBtn, button#myBtn1{
+    line-height: 1.5;
+    margin-left: 5px;
+}
+
+.user-registration{
+    margin: auto;
+    width: fit-content;
+}
+
+.user-registration .inline-input{
+    /* max-width: 30%; */
+    width: fit-content;
+    margin-left: 1rem;
+    display: inline-block;
+}
+
+.user-registration input[type=submit]{
+    margin:   0px auto  30px auto;
+    display: block;
+    width: 90%;
 }

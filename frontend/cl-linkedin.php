@@ -54,7 +54,7 @@ if ( $first_code != '' ) {//&& !empty($li_client_id) && $li_client_id != "" && $
     $basic_response_body = json_decode($basic_body,true);
  
 
-    //get email address of user
+    //gets email address of user
     $url_for_email = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))';
 
     $ch_user_email = curl_init();
@@ -86,8 +86,7 @@ if ( $first_code != '' ) {//&& !empty($li_client_id) && $li_client_id != "" && $
         </script>
     <?php
 
-    
 }else{
-    echo '<script>console.log("Linkedin button not pressed"); </script>';
+    echo '<script> console.log("Linkedin button not pressed"); </script>';
 }
 
