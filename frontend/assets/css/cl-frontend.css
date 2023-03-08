@@ -93,11 +93,13 @@ button{
 }
 
 #fb-logout a, #google-logout a{
+    font-size: 14px !important;
     color: blue !important;
     text-decoration: underline !important;
 }
 
 .reset-pass, .reset-pass:hover{
+    font-size: 14px !important;
     color: blue !important;
     text-decoration: underline !important;
     background-color: transparent !important;

@@ -1,11 +1,7 @@
 <?php
-
-
 /**
  * Runs on initialization
  */
-
-// register style on initialization
 add_action( 'init', 'complete_login_init' );
 function complete_login_init(){
 
@@ -19,83 +15,95 @@ function complete_login_init(){
     //google library
     wp_register_script( 'complete-login-google-lib', 'https://accounts.google.com/gsi/client', null, '1.0.0', false ); 
     
-    //emqueue scripts
+    //enqueue scripts
     add_action('wp_enqueue_scripts', 'complete_login_enqueue_scripts');
     function complete_login_enqueue_scripts(){
         wp_enqueue_style( 'complete-login-style' );
         wp_enqueue_script( 'complete-login-script' );
         wp_enqueue_script( 'complete-login-fb-btn' );
         wp_enqueue_script( 'complete-login-google-lib' );
-        
     }
 
     //display user registration form if user not logged in
     if ( ! is_user_logged_in() ) {
-        
         function complete_login_third_party_login(){
             
             //OAuth flow for linkedin's signin button
             require_once __DIR__ . '/cl-linkedin.php';
         }
         add_action( 'wp_head', 'complete_login_third_party_login' );
-
-        
-        /**
-         * Add signin and signup button to menu.
-         */
-        add_filter('wp_nav_menu_items','complete_login_auth_options', 10, 2);
-        function complete_login_auth_options( $items, $args ) 
-        {
-            if( $args->theme_location == 'menu-1' ) // only if primary menu
-            {
-                $items_array = array();
-                while ( false !== ( $item_pos = strpos ( $items, '<li', 3 ) ) )
-                {
-                    $items_array[] = substr($items, 0, $item_pos);
-                    $items = substr($items, $item_pos);
-                }
-                $items_array[] = $items;
-                array_splice($items_array, sizeof($items_array), 0, '<li><button id="myBtn">SIGNIN</button>'.complete_login_third_party_login_providers().'<button id="myBtn1">SIGNUP</button>'.complete_login_user_registration().'</li>'); // insert login options
-
-                $items = implode('', $items_array);
-            }
-            return $items;
-        }
-    }else{
-        /**
-         * Add logout button to menu.
-         */
-        add_filter('wp_nav_menu_items','complete_login_logout_option', 10, 2);
-        function complete_login_logout_option( $items, $args ) 
-        {
-            if( $args->theme_location == 'menu-1' ) // only if primary menu
-            {
-                $items_array = array();
-                while ( false !== ( $item_pos = strpos ( $items, '<li', 3 ) ) )
-                {
-                    $items_array[] = substr($items, 0, $item_pos);
-                    $items = substr($items, $item_pos);
-                }
-                $items_array[] = $items;
-                array_splice($items_array, sizeof($items_array), 0, '<li><a class="logout-btn" href='.wp_logout_url( home_url() ).'>LOGOUT</a></li>'); // insert login options
-
-                $items = implode('', $items_array);
-            }
-            return $items;
-        }
     }
+    
+    //!just for checking
+    if ( is_user_logged_in() ) {
+        // echo "==========";
+        // echo "CURRENT USER-> ". get_current_user_id();
+    }
+
+    
+    /**
+     * Add signin / signup button to menu or logout button depending if user logged in
+     */
+    add_filter('wp_nav_menu_items','complete_login_auth_options', 10, 2);
+    
+    function complete_login_auth_options( $items, $args ) 
+    {
+        $chosen_menu = get_option( 'cl_choose_nav' );
+        $loggedout_nav_item = '<li><button id="myBtn">SIGNIN</button>'.complete_login_third_party_login_providers().'<button id="myBtn1">SIGNUP</button>'.complete_login_user_registration().'</li>';
+        $loggedin_nav_item = '<li><a id="logout-btn" class="logout-btn" href='.complete_login_custom_logout().'>LOGOUT</a></li>';
+        
+        if( $args->theme_location == $chosen_menu ) //display the buttons on user chosen menu
+        {
+            $items_array = array();
+            while ( false !== ( $item_pos = strpos ( $items, '<li', 3 ) ) )
+            {
+                $items_array[] = substr($items, 0, $item_pos);
+                $items = substr($items, $item_pos);
+            }
+            $items_array[] = $items;
+            array_splice($items_array, sizeof($items_array), 0, is_user_logged_in() ? $loggedin_nav_item : $loggedout_nav_item );
+            $items = implode('', $items_array);
+        }
+        return $items;
+    }
+
+    // function destroy_sessions() {
+    //     global $user;
+    //     $sessions = WP_Session_Tokens::get_instance($user->ID);
+    //     $sessions->destroy_all();//destroys all sessions
+    //     wp_clear_auth_cookie();//clears cookies regarding WP Auth
+    // }
+    // add_action('wp_logout', 'destroy_sessions');
+}
+
+
+/**
+ * It destroys the current session, logs the user out, and redirects them to the home page.
+ * !works ONLY for normal signin
+ */
+function complete_login_custom_logout(){
+
+    // if( ( isset( $_COOKIE['google_user_data'] ) && $_COOKIE['google_user_data'] != "" ) ){
+    //     // echo "<script>
+    //     //         //set cookie to empty after signout
+    //     //         document.cookie = 'g_cookie=';
+    //     //         document.cookie = 'google_user_data=';
+    //     //         google.accounts.id.revoke('neplese931@gmail.com', done => {
+    //     //             console.log('consent revoked');
+    //     //         }); 
+    //     //     </script>";
+    //     wp_set_current_user(0);
+    // }
+    // unset($_COOKIE['google_user_data']);
+    return wp_logout_url( home_url() );
+    //   wp_safe_redirect( home_url() );
+    //   exit;
 }
 
 
 
-
-
-
-
-
-
 /**
- * It creates a new user with the username, password and email address provided by the user.
+ * It creates a new user with the username, password and email address provided by the user and logs in the user
  */
 function complete_login_user_registration(){
     ob_start();
@@ -137,7 +145,7 @@ function complete_login_user_registration(){
     </div>
     <?php
 
-    if( isset($_POST['user_registration']) ){
+    if( isset( $_POST['user_registration'] ) ){
 
         $signup_user_name = $_POST['user_name'];
         $signup_user_email = $_POST['user_email'];
@@ -162,7 +170,7 @@ function complete_login_user_registration(){
 
                     wp_set_current_user($user_id, $user->user_login);
                     wp_set_auth_cookie($user_id);
-                    do_action('wp_login', $user->user_login ,$user);
+                    do_action( 'wp_login', $user->user_login ,$user );
 
                     if ( is_user_logged_in() ) {
                         global $wp;
@@ -181,27 +189,6 @@ function complete_login_user_registration(){
 }
 add_filter('template_redirect', 'complete_login_user_registration');
 
-
-
-
-
-function complete_login_custom_signin( $creds ) {
-
-	$user = wp_signon( $creds, false );
-
-    if ( is_wp_error( $user ) ) {
-        $wp_err =  $user->get_error_message();
-        return '<p class="err"> <span>&times;</span>&nbsp;&nbsp;&nbsp;'.$wp_err.'</p>';
-    }else{
-        //redirect back to current page
-        global $wp;
-        wp_safe_redirect( home_url( $wp->request ) );
-    }
-}
-add_filter( 'template_redirect', 'complete_login_custom_signin');
-
-// Run before the headers and cookies are sent.
-// add_action( 'after_setup_theme', 'complete_login_custom_signin', 10, 2 );
 
 
 /**
@@ -236,14 +223,28 @@ function complete_login_user_signin(){
 
     if( isset($_POST['user_signin']) ){
 
-
         $signin_user_name = $_POST['user_name'];
         $signin_password = $_POST['signin_password'];
 
         if( ! empty( $signin_user_name ) && ! empty( $signin_password ) ){
             //signin user
+            // $creds = [ 'user_login' => $signin_user_name, 'user_password' => $signin_password, 'remember' => true, ];
+            // echo complete_login_custom_signin( $creds );
+
+            // echo complete_login_custom_signin( $signin_user_name, $signin_password );
             $creds = [ 'user_login' => $signin_user_name, 'user_password' => $signin_password, 'remember' => true, ];
-            echo complete_login_custom_signin( $creds );
+            $user = wp_signon( $creds, false );
+
+            if ( is_wp_error( $user ) ) {
+                $wp_err =  $user->get_error_message();
+                return '<p class="err"> <span>&times;</span>&nbsp;&nbsp;&nbsp;'.$wp_err.'</p>';
+            }else{
+                // wp_set_current_user( $user->ID, $user->user_login );
+                //redirect back to current page
+                global $wp;
+                wp_safe_redirect( home_url( $wp->request ) );
+            }
+            
         }else{
             echo '<p class="err"> <span>&times;</span>&nbsp;&nbsp;&nbsp;All the fields must be filled !! </p>';
         }
@@ -294,46 +295,37 @@ add_filter('template_redirect', 'complete_login_user_signin');
 
 
 
+
+
+
 function check_google_signin(){
-    if(isset($_COOKIE['google_user_data']) && !empty($_COOKIE['google_user_data'])) { 
+    if( isset($_COOKIE['google_user_data']) && !empty($_COOKIE['google_user_data']) ) { 
         $google_acc_arr = explode (",", $_COOKIE['google_user_data']); 
         $google_email = $google_acc_arr[2];
 
         $google_full_name = explode (" ", $google_acc_arr[1]);
         $google_first_name = $google_full_name[0];
 
-        if ( email_exists( $google_email ) ) {
+        if ( email_exists( $google_email ) ) { //login the existing user
 
             //login
+            
             $user = get_user_by( 'email', $google_email );
             $user_id = $user->ID;
-
+            echo "=====".$user_id."=======".$google_email."<br>";
+           // die('test done '. $user_id);
             wp_set_current_user( $user_id, $user->user_login );
             wp_set_auth_cookie( $user_id );
-            do_action( 'wp_login', $user->user_login ,$user );
+            do_action( 'wp_login', $user->user_login, $user );
 
-            if ( is_user_logged_in() ) {
-                global $wp;
-                wp_safe_redirect( home_url( $wp->request ) );
-            }
-
-            // // Redirect URL
-            // if ( !is_wp_error( $user ) )
-            // {
-            //     clean_user_cache($user->ID);
-            //     $curr_uid = $user->ID;
-            //     wp_set_current_user( $curr_uid, $user->user_login );
-            //     update_user_caches( $user );
-
-            //     if ( is_user_logged_in() ) {
-            //         global $wp;
-            //         wp_safe_redirect( home_url( $wp->request ) );
-            //     }
+            // if ( is_user_logged_in() ) {
+            //     global $wp;
+            //     wp_safe_redirect( home_url( $wp->request ) );
             // }
 
-            // echo "That E-mail is registered to user number " . email_exists( $google_email );
-
-        } else {
+        } else { 
+            // die('not done ');
+            //create new user and login the user
             // $new_password = wp_generate_password( 8, false, false );
             // $new_user = wp_create_user( $google_first_name, $new_password, $google_email );
 
@@ -348,8 +340,7 @@ function check_google_signin(){
     }
 }
 // add_filter('template_redirect', 'check_google_signin');
-
-
+//add_action('init', 'check_google_signin');
 
 
 /**
@@ -450,47 +441,6 @@ function check_google_signin(){
     </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <script>
 
         /** 
@@ -575,4 +525,6 @@ function check_google_signin(){
 
     </script>
 <?php }
-// add_filter('template_redirect', 'complete_login_third_party_login_providers');
+
+
+

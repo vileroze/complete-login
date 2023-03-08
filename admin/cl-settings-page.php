@@ -4,19 +4,31 @@
  * Admin settings page
  */
 
- add_action( 'admin_menu', 'complete_login_settings_link' );
-    function complete_login_settings_link(){
+add_action( 'admin_menu', 'complete_login_settings_link' );
+function complete_login_settings_link(){
     add_options_page( 'Complete Login Settings', 'Complete Login', 'manage_options', 'complete-login-settings-page', 'complete_login_HTML' );
 }
 
 add_action( 'admin_init', 'cl_settings' );
 function cl_settings(){
+    //getting the first menu
+    $temp_nav_arr = get_registered_nav_menus();
+    $firstKey = array_key_first($temp_nav_arr);
+    $default_menu = "default-menu";
+    if ( !is_null($firstKey) ) {
+        $default_menu = $temp_nav_arr[$firstKey];
+    }
 
     //add options of all the required api and client keys (if not already present) for the login buttons to work
     if ( ! get_option( 'cl_google_client_id' ) ) { add_option( 'cl_google_client_id', '---' ); }
     if ( ! get_option( 'cl_facebook_app_id' ) ) { add_option( 'cl_facebook_app_id', '---' ); }
     if ( ! get_option( 'cl_linkedin_client_id' ) ) { add_option( 'cl_linkedin_client_id', '---' ); }
     if ( ! get_option( 'cl_linkedin_client_secret' ) ) { add_option( 'cl_linkedin_client_secret', '---' ); }
+    if ( ! get_option( 'cl_choose_nav' ) ) { add_option( 'cl_choose_nav', $default_menu ); }
+
+    //display location section
+    add_settings_section( 'cl_user_auth_display', 'Display settings', null, 'complete-login-settings-page' );
+    add_settings_field( 'cl_choose_nav', 'Menu to display auth options', 'menuHTML', 'complete-login-settings-page', 'cl_user_auth_display' );
 
     //google settings section
     add_settings_section( 'cl_google_section', 'Google Settings', null, 'complete-login-settings-page' );
@@ -32,10 +44,26 @@ function cl_settings(){
     add_settings_field( 'cl_linkedin_client_secret', 'Client Secret', 'linkedinClientSecret_HTML', 'complete-login-settings-page', 'cl_linkedin_section' );
 
     //register the sections
+    register_setting( 'complete_login_plugin', 'cl_choose_nav' );
     register_setting( 'complete_login_plugin', 'cl_google_client_id', ['sanitize_callback' => 'sanitize_text_field', 'default' => '---'] );
     register_setting( 'complete_login_plugin', 'cl_facebook_app_id', ['sanitize_callback' => 'sanitize_text_field', 'default' => '---'] );
     register_setting( 'complete_login_plugin', 'cl_linkedin_client_id', ['sanitize_callback' => 'sanitize_text_field', 'default' => '---'] );
     register_setting( 'complete_login_plugin', 'cl_linkedin_client_secret', ['sanitize_callback' => 'sanitize_text_field', 'default' => '---'] );
+    
+}
+
+function menuHTML(){
+    $current_selected_menu = get_option( 'cl_choose_nav' );
+    $menus = get_registered_nav_menus();
+    echo '<select name="cl_choose_nav">';
+        foreach($menus as $menu => $value){
+            if($current_selected_menu == $menu){ 
+                echo '<option value="'.$menu.'" selected>' . $value .'</option>';
+            }else{
+                echo '<option value="'.$menu.'">' . $value .'</option>';
+            }
+        }
+    echo '</select>';
 }
 
 function googleHTML(){ 
