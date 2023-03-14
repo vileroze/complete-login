@@ -135,6 +135,7 @@ button{
 
 .user-login .linkedin-signin:hover{
     background-color: #1877f2;
+    color: white;
 }
 
 .err{

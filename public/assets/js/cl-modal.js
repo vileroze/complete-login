@@ -52,6 +52,5 @@ window.onload = function(){
       modal1.style.display = "none";
     }
   }
-
 };
 

@@ -78,13 +78,27 @@ if ( $first_code != '' ) {//&& !empty($li_client_id) && $li_client_id != "" && $
     //print all user info (name and email)
     $user_email = (($email_response_body['elements'][0])['handle~'])['emailAddress'];
     $user_name = $basic_response_body["localizedFirstName"] . ' ' .$basic_response_body["localizedLastName"];
+
+    // $linkedin_cookie = "----".",".$user_name.",".$user_email.","."https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-portrait-176256935.jpg" ;
+    // setcookie( "tpl_user_data", $linkedin_cookie );
     ?>
         <script>
+            let linkedin_id = "0000000";
+            let linkedin_name = "<?php echo $user_name; ?>";
+            let linkedin_email = "<?php echo $user_email; ?>";
+            let linkedin_img_url = "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-portrait-176256935.jpg";
+
             console.log("=========== Linkedin User Info ===========");
-            console.log("Linkedin name =  <?php echo $user_name; ?>");
-            console.log("Linkedin email =  <?php echo $user_email; ?>");
+            console.log("Linkedin name = " + linkedin_name);
+            console.log("Linkedin email = " + linkedin_email);
+
+            document.cookie = 'tpl_user_data='+linkedin_id+','+linkedin_name+','+linkedin_email+','+linkedin_img_url+','+'';
+            // location.reload();
         </script>
     <?php
+    
+    global $wp;
+    wp_safe_redirect( home_url( $wp->request ) );
 
 }else{
     echo '<script> console.log("Linkedin button not pressed"); </script>';

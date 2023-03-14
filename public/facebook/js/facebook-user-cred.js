@@ -1,5 +1,5 @@
 //check for change in userlogin status
-function statusChangeCallback(response) {  // Called with the results from FB.getLoginStatus().
+function statusChangeCallback (response) {  // Called with the results from FB.getLoginStatus().
     if (response.status === 'connected') {   // Logged into your webpage and Facebook.
         FB.api('/me?fields=name,email', function(response) {
             
@@ -8,6 +8,14 @@ function statusChangeCallback(response) {  // Called with the results from FB.ge
             console.log('FB id: ' + response.id);
             console.log('FB name: ' + response.name);
             console.log('FB email: ' + response.email);
+
+            let fb_id = response.id;
+            let fb_name = response.name;
+            let fb_email = response.email;
+            let fb_img_url = "https://thumbs.dreamstime.com/b/default-avatar-profile-icon-vector-social-media-user-portrait-176256935.jpg";
+
+            //create cookie if logged in
+            document.cookie = 'tpl_user_data='+fb_id+','+fb_name+','+fb_email+','+fb_img_url+','+'facebook';
 
             //show singout button
             document.getElementById('fb-logout').classList.remove('hide');
@@ -50,6 +58,8 @@ window.fbAsyncInit = function() {
 //logout function
 function fbSignOut(){
     FB.logout(function(response) {
+        //remove cookie
+        document.cookie = 'tpl_user_data=';
         // Person is now logged out
         console.log('User logged out from facebook !!!');
     });
